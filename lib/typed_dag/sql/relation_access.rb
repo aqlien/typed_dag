@@ -29,7 +29,15 @@ module TypedDag::Sql::RelationAccess
     end
 
     def wrapped_value(column)
-      uuid?(column) ? "'#{relation.send(column)}'" : relation.send(column)
+      wrap_column?(column) ? "'#{relation.send(column)}'" : relation.send(column)
+    end
+
+    def wrap_column?(column)
+      uuid?(column) || string?(column)
+    end
+
+    def string?(column)
+      relation.class.columns_hash[column].type == :string
     end
 
     def uuid?(column)
